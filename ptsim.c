@@ -1,3 +1,5 @@
+// Luke Reynolds
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -65,6 +67,14 @@ void new_process(int proc_num, int page_count)
         int pt_addr = get_address(page_table, i);
         mem[pt_addr] = new_page;
     }
+}
+
+//
+// Get the page table for a given process
+//
+unsigned char get_page_table(int proc_num)
+{
+    return mem[proc_num + 64];
 }
 
 //
