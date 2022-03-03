@@ -24,7 +24,7 @@ int get_address(int page, int offset)
 //
 void initialize_mem(void)
 {
-    for (i = 0; i < MEM_SIZE; ++i) {
+    for (int i = 0; i < MEM_SIZE; ++i) {
         mem[i] = 0;
     }
     mem[0] = 1;
@@ -36,9 +36,13 @@ void initialize_mem(void)
 //
 unsigned char get_page(void)
 {
-    for (i = 0; i < PAGE_COUNT; ++i) {
-        mem[i] = 0;
+    for (int i = 0; i < PAGE_COUNT; ++i) {
+        if (mem[i] == 0) {
+            mem[i] = 1;
+            return i;
+        }
     }
+    return 0xff;
 }
 
 //
@@ -48,16 +52,19 @@ unsigned char get_page(void)
 //
 void new_process(int proc_num, int page_count)
 {
-    page_table = get_page();
+    int page_table = get_page();
     mem[64 + proc_num] = page_table;
-    for i from 0 to page_count:
-        new_page = get_page();
+
+    for (int i = 0; i < page_count; ++i) {
+        unsigned char new_page = get_page();
 
         // Set the page table to map virt -> phys
         // Virtual page number is i
         // Physical page number is new_page
+
         int pt_addr = get_address(page_table, i);
         mem[pt_addr] = new_page;
+    }
 }
 
 //
