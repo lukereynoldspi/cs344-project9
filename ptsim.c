@@ -61,7 +61,7 @@ void new_process(int proc_num, int page_count)
         printf("OOM: proc %d: page table\n", proc_num);
     }
 
-    if (PAGE_SIZE < page_count) {
+    if ((PAGE_SIZE - 2) < page_count) {
         printf("OOM: proc %d: data page\n", proc_num);
     }
     else {
