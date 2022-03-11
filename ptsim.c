@@ -100,14 +100,14 @@ unsigned char get_page_table(int proc_num)
 void kill_process(int p) {
     int page_table = get_page_table(p);
     
-    for (int i = 0; i < page_table; ++i) {
+    for (int i = 0; i <= page_table; ++i) {
         int pt_addr = get_address(page_table, i);
         if (mem[pt_addr] != 0) {
             int page_table_page = mem[pt_addr];
             deallocate_page(page_table_page);
         }
     }
-
+    
     deallocate_page(page_table);
 }
 
