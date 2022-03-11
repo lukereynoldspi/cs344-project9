@@ -101,10 +101,23 @@ unsigned char get_page_table(int proc_num)
     return mem[proc_num + 64];
 }
 
-get_physical_address(int proc_num, int virtual_addr) {
-    virtual_page = virtual_address >> 8
+void get_physical_address(int proc_num, int virtual_addr) {
+    int virtual_page = virtual_addr >> 8;
+    int offset = virtual_addr & 255;
+
 }
 
+void load_value(int proc_num, int virt_addr) {
+    int phys_addr = get_physical_address(proc_num, virt_addr);
+    int value = mem[phys_addr];
+    printf("Load proc %d: %d => %d, value=%d\n", proc_num, virt_addr, phys_addr, value);
+}
+
+void store_value(int proc_num, int virt_addr, int value) {
+    int phys_addr = get_physical_address(proc_num, virt_addr);
+    mem[phys_addr] = value;
+    printf("Store proc %d: %d => %d, value=%d\n", proc_num, virt_addr, phys_addr, value);
+}
 //
 // Print the free page map
 //
@@ -179,10 +192,12 @@ int main(int argc, char *argv[])
             int n = atoi(argv[++i]);
             int a = atoi(argv[++i]);
             int b = atoi(argv[++i]);
+            store_value(n, a, b);
         }
         else if (strcmp(argv[i], "lb") == 0) {
             int n = atoi(argv[++i]);
             int b = atoi(argv[++i]);
+            load_value(n, b);
         }
     }
 }
