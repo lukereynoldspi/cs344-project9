@@ -47,6 +47,9 @@ unsigned char get_page(void)
     return 0xff;
 }
 
+//
+// Deallocates a page from memory
+//
 void deallocate_page(int p) {
     mem[p] = 0;
 }
@@ -82,36 +85,63 @@ void new_process(int proc_num, int page_count)
     }
 }
 
-void kill_process(int p) {
-    unsigned char page_table_page = get_page_table(p);
-    int page_table = get_page();
-    for (int i = 0; i < page_table; ++i) {
-        if (mem[i] != 0) {
-            deallocate_page(i);
-        }
-    }
-    page_table_page = 0;
-}
-
 //
 // Get the page table for a given process
 //
+
 unsigned char get_page_table(int proc_num)
 {
     return mem[proc_num + 64];
 }
 
-void get_physical_address(int proc_num, int virtual_addr) {
-    int virtual_page = virtual_addr >> 8;
-    int offset = virtual_addr & 255;
+//
+// Deallocates memory in a process, basically inverse of new process
+//
+void kill_process(int p) {
+    int page_table = get_page_table(p);
+    
+    for (int i = 0; i < page_table; ++i) {
+        int pt_addr = get_address(page_table, i);
+        if (mem[pt_addr] != 0) {
+            int page_table_page = mem[pt_addr];
+            deallocate_page(page_table_page);
+        }
+    }
+
+    deallocate_page(page_table);
+}
+
+//
+// Get the physical address for a given process and virtual address
+//
+
+int get_physical_address(int proc_num, int virt_addr) {
+    int virt_page = virt_addr >> 8;
+    int offset = virt_addr & 255;
+
+    int page_table = get_page_table(proc_num);
+    int page_table_addr = get_address(page_table, 0);
+
+    int phys_page = mem[virt_page + page_table_addr];
+    int phys_addr = (phys_page << 8) | offset;
+
+    return phys_addr;
 
 }
+
+//
+// Loads value of physical address and prints it
+//
 
 void load_value(int proc_num, int virt_addr) {
     int phys_addr = get_physical_address(proc_num, virt_addr);
     int value = mem[phys_addr];
     printf("Load proc %d: %d => %d, value=%d\n", proc_num, virt_addr, phys_addr, value);
 }
+
+//
+// Stores value of physical address and prints it
+//
 
 void store_value(int proc_num, int virt_addr, int value) {
     int phys_addr = get_physical_address(proc_num, virt_addr);
