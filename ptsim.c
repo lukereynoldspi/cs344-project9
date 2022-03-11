@@ -47,6 +47,10 @@ unsigned char get_page(void)
     return 0xff;
 }
 
+void deallocate_page(int p) {
+    mem[p] = 0;
+}
+
 //
 // Allocate pages for a new process
 //
@@ -78,12 +82,27 @@ void new_process(int proc_num, int page_count)
     }
 }
 
+void kill_process(int p) {
+    unsigned char page_table_page = get_page_table(p);
+    int page_table = get_page();
+    for (int i = 0; i < page_table; ++i) {
+        if (mem[i] != 0) {
+            deallocate_page(i);
+        }
+    }
+    page_table_page = 0;
+}
+
 //
 // Get the page table for a given process
 //
 unsigned char get_page_table(int proc_num)
 {
     return mem[proc_num + 64];
+}
+
+get_physical_address(int proc_num, int virtual_addr) {
+    virtual_page = virtual_address >> 8
 }
 
 //
@@ -151,6 +170,19 @@ int main(int argc, char *argv[])
         else if (strcmp(argv[i], "ppt") == 0) {
             int proc_num = atoi(argv[++i]);
             print_page_table(proc_num);
+        }
+        else if (strcmp(argv[i], "kp") == 0) {
+            int p = atoi(argv[++i]);
+            kill_process(p);
+        }
+        else if (strcmp(argv[i], "sb") == 0) {
+            int n = atoi(argv[++i]);
+            int a = atoi(argv[++i]);
+            int b = atoi(argv[++i]);
+        }
+        else if (strcmp(argv[i], "lb") == 0) {
+            int n = atoi(argv[++i]);
+            int b = atoi(argv[++i]);
         }
     }
 }
