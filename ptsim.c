@@ -31,6 +31,7 @@ void initialize_mem(void)
     }
     mem[0] = 1;
 }
+
 //
 // Allocate a physical page
 //
@@ -88,7 +89,6 @@ void new_process(int proc_num, int page_count)
 //
 // Get the page table for a given process
 //
-
 unsigned char get_page_table(int proc_num)
 {
     return mem[proc_num + 64];
@@ -114,7 +114,6 @@ void kill_process(int p) {
 //
 // Get the physical address for a given process and virtual address
 //
-
 int get_physical_address(int proc_num, int virt_addr) {
     int virt_page = virt_addr >> 8;
     int offset = virt_addr & 255;
@@ -132,7 +131,6 @@ int get_physical_address(int proc_num, int virt_addr) {
 //
 // Loads value of physical address and prints it
 //
-
 void load_value(int proc_num, int virt_addr) {
     int phys_addr = get_physical_address(proc_num, virt_addr);
     int value = mem[phys_addr];
@@ -142,12 +140,12 @@ void load_value(int proc_num, int virt_addr) {
 //
 // Stores value of physical address and prints it
 //
-
 void store_value(int proc_num, int virt_addr, int value) {
     int phys_addr = get_physical_address(proc_num, virt_addr);
     mem[phys_addr] = value;
     printf("Store proc %d: %d => %d, value=%d\n", proc_num, virt_addr, phys_addr, value);
 }
+
 //
 // Print the free page map
 //
